@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose your surprise 🎁</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .stage{ max-width: 440px; }
+  .card{ max-width: 440px; padding: 40px 30px 32px; }
+
+  .choose-title{
+    font-family:'Fredoka', sans-serif;
+    font-size: 1.35rem;
+    color: var(--text-deep);
+    margin-bottom: 4px;
+  }
+
+  .choose-title .script{
+    font-family:'Caveat', cursive;
+    font-size: 2.1rem;
+    color: var(--accent-1);
+    font-weight:700;
+    display:block;
+    line-height:1.1;
+    margin-top: 2px;
+  }
+
+  .choose-subtitle{
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    margin-bottom: 28px;
+  }
+
+  .option-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .option-tile{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 10px;
+    padding: 22px 12px 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.32);
+    border: 1.5px solid rgba(255,255,255,0.5);
+    cursor:pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  }
+
+  .option-tile:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 12px 22px rgba(184,76,116,0.22);
+    background: rgba(255,255,255,0.45);
+  }
+
+  .option-tile.selected{
+    border-color: var(--accent-1);
+    background: rgba(255,255,255,0.55);
+    box-shadow: 0 12px 22px rgba(236,95,138,0.3);
+  }
+
+  .option-icon{
+    width: 56px;
+    height: 56px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 2rem;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ffffff, #ffe1ec);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), 0 6px 12px rgba(184,76,116,0.15);
+  }
+
+  .option-label{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: 0.78rem;
+    letter-spacing: 1.2px;
+    color: var(--text-deep);
+    text-transform: uppercase;
+  }
+
+  .choose-note{
+    margin-top: 24px;
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    min-height: 18px;
+  }
+
+  @media (max-width: 380px){
+    .option-icon{ width:48px; height:48px; font-size:1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="marble-wrap" aria-hidden="true">
+    <div class="marble-bg"></div>
+    <div class="marble-sheen"></div>
+  </div>
+
+  <div class="butterfly-field" aria-hidden="true"></div>
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+  <div class="butterflies" id="butterflies" aria-hidden="true"></div>
+
+  <div class="stage">
+    <main class="card" id="page3" role="main">
+      <h1 class="choose-title">Choose your<span class="script">surprise 🎁</span></h1>
+      <p class="choose-subtitle">Pick one to open first</p>
+
+      <div class="option-grid">
+        <div class="option-tile" data-option="message" tabindex="0" role="button">
+          <div class="option-icon">💌</div>
+          <div class="option-label">Message</div>
+        </div>
+        <div class="option-tile" data-option="flowers" tabindex="0" role="button">
+          <div class="option-icon">💐</div>
+          <div class="option-label">Flowers</div>
+        </div>
+        <div class="option-tile" data-option="cake" tabindex="0" role="button">
+          <div class="option-icon">🎂</div>
+          <div class="option-label">Cake</div>
+        </div>
+        <div class="option-tile" data-option="pictures" tabindex="0" role="button">
+          <div class="option-icon">📸</div>
+          <div class="option-label">Pictures</div>
+        </div>
+      </div>
+
+      <p class="choose-note" id="chooseNote"></p>
+    </main>
+  </div>
+
+<script src="shared.js"></script>
+<script>
+  const tiles = document.querySelectorAll('.option-tile');
+  const chooseNote = document.getElementById('chooseNote');
+
+  const labels = {
+    message: "your message 💌",
+    flowers: "the flowers 💐",
+    cake: "the cake 🎂",
+    pictures: "the pictures 📸"
+  };
+
+  tiles.forEach(tile => {
+    function choose(){
+      tiles.forEach(t => t.classList.remove('selected'));
+      tile.classList.add('selected');
+      const option = tile.dataset.option;
+
+      if(option === 'cake'){
+        chooseNote.textContent = `Opening ${labels[option]}...`;
+        setTimeout(() => { window.location.href = 'page6.html'; }, 500);
+        return;
+      }
+
+      if(option === 'flowers'){
+        chooseNote.textContent = `Opening ${labels[option]}...`;
+        setTimeout(() => { window.location.href = 'page5.html'; }, 500);
+        return;
+      }
+
+      if(option === 'pictures'){
+        chooseNote.textContent = `Opening ${labels[option]}...`;
+        setTimeout(() => { window.location.href = 'page7.html'; }, 500);
+        return;
+      }
+
+      chooseNote.textContent = `Opening ${labels[option]}...`;
+      // Message → page4.html (coming next)
+    }
+
+    tile.addEventListener('click', choose);
+    tile.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        choose();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Captured Memories 📸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .stage{ max-width: 480px; }
+  .card{ max-width: 480px; padding: 34px 24px 30px; }
+ 
+  .pics-title{
+    font-family:'Fredoka', sans-serif;
+    font-size: 1.25rem;
+    color: var(--text-deep);
+    margin-bottom: 2px;
+  }
+ 
+  .pics-subtitle{
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin-bottom: 22px;
+  }
+ 
+  /* ----------------------------------------------------------
+     Collage: 2 small polaroid photos flank each side of the two
+     photo strips in the middle. Everything here is fixed and
+     hard-coded — there is no upload button or file picker on
+     the live page. To change any photo, edit the src attribute
+     in the HTML directly (or replace the matching filename:
+     photo-strip-1.jpg, photo-strip-2.jpg, polaroid-1.jpg,
+     polaroid-2.jpg, polaroid-3.jpg, polaroid-4.jpg).
+     ---------------------------------------------------------- */
+  .collage{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 7 / 6;
+    margin: 6px auto 8px;
+  }
+ 
+  .collage img.strip{
+    position:absolute;
+    display:block;
+    border-radius: 8px;
+    box-shadow: 0 10px 22px rgba(122,37,69,0.28);
+  }
+ 
+  .strip-1{ left: 25%; top: 4%;  width: 24%; transform: rotate(-2deg); z-index: 2; }
+  .strip-2{ left: 51%; top: 7%;  width: 24%; transform: rotate(2deg);  z-index: 2; }
+ 
+  .polaroid{
+    position:absolute;
+    background:#fff;
+    padding: 6px 6px 18px;
+    border-radius: 4px;
+    box-shadow: 0 8px 16px rgba(122,37,69,0.22);
+  }
+ 
+  .pol-l1{ left: 0%;  top: 0%;  width: 22%; transform: rotate(-8deg); z-index: 3; }
+  .pol-l2{ left: -2%; top: 50%; width: 26%; transform: rotate(10deg); z-index: 5; }
+  .pol-r1{ left: 78%; top: 2%;  width: 22%; transform: rotate(7deg);  z-index: 3; }
+  .pol-r2{ left: 74%; top: 50%; width: 26%; transform: rotate(-9deg); z-index: 4; }
+ 
+  .polaroid .photo-area{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #eef2ef;
+  }
+ 
+  .placeholder-scene{
+    position:absolute; inset:0;
+    background: linear-gradient(#d9edf8 0%, #eef8f0 62%);
+  }
+ 
+  .placeholder-scene .cloud{
+    position:absolute;
+    background:#fff;
+    border-radius: 50%;
+    opacity:0.85;
+  }
+ 
+  .placeholder-scene .hill{
+    position:absolute;
+    left:-15%; right:-15%; bottom:-18%; height:52%;
+    background:#bfe0b0;
+    border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+  }
+ 
+  .placeholder-scene .hill2{
+    position:absolute;
+    left:10%; right:-35%; bottom:-20%; height:38%;
+    background:#a9d69b;
+    border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+    opacity:0.9;
+  }
+ 
+  .pol-img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit: cover;
+    opacity:0;
+    transition: opacity 0.3s ease;
+  }
+ 
+  .polaroid.has-photo .pol-img{ opacity:1; }
+  .polaroid.has-photo .placeholder-scene{ opacity:0; }
+ 
+  /* hand-drawn arrow + note pointing at the empty featured slot */
+  .arrow-note{
+    position:absolute;
+    left: 2%;
+    top: 40%;
+    width: 20%;
+    min-width: 62px;
+    z-index: 6;
+    pointer-events:none;
+  }
+ 
+  .arrow-note svg{ width:100%; height:auto; overflow:visible; }
+ 
+  .arrow-note .note-text{
+    font-family:'Caveat', cursive;
+    font-size: 1rem;
+    color: var(--accent-1);
+    font-weight:700;
+    text-align:center;
+    display:block;
+    margin-top: 2px;
+  }
+ 
+  .collage-title{
+    text-align:center;
+    margin-top: 22px;
+  }
+ 
+  .collage-title .script{
+    font-family:'Caveat', cursive;
+    font-size: 2.1rem;
+    color: var(--accent-1);
+    font-weight:700;
+    line-height:1;
+  }
+ 
+  .action-row{
+    display:flex;
+    justify-content:center;
+    margin-top: 22px;
+  }
+ 
+  .back-btn{
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: 0.8rem;
+    cursor:pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1.5px solid rgba(163,72,106,0.35);
+    background: rgba(255,255,255,0.4);
+    color: var(--text-deep);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+  }
+ 
+  .back-btn:hover{ transform: translateY(-2px); }
+ 
+</style>
+</head>
+<body>
+ 
+  <div class="marble-wrap" aria-hidden="true">
+    <div class="marble-bg"></div>
+    <div class="marble-sheen"></div>
+  </div>
+ 
+  <div class="butterfly-field" aria-hidden="true"></div>
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+  <div class="butterflies" id="butterflies" aria-hidden="true"></div>
+ 
+  <div class="stage">
+    <main class="card" id="page7" role="main">
+      <h1 class="pics-title">📸 Our Pictures</h1>
+      <p class="pics-subtitle">A little look back at us</p>
+ 
+      <div class="collage">
+ 
+        <div class="polaroid pol-l1">
+          <div class="photo-area">
+            <div class="placeholder-scene">
+              <div class="cloud" style="width:16px;height:9px;left:18%;top:16%;"></div>
+              <div class="hill2"></div>
+              <div class="hill"></div>
+            </div>
+            <img class="pol-img" src="polaroid-1.jpg" alt=""
+                 onerror="this.style.display='none'"
+                 onload="this.closest('.polaroid').classList.add('has-photo')">
+          </div>
+        </div>
+ 
+        <div class="polaroid pol-l2">
+          <div class="photo-area">
+            <div class="placeholder-scene">
+              <div class="cloud" style="width:18px;height:10px;left:14%;top:14%;"></div>
+              <div class="hill2"></div>
+              <div class="hill"></div>
+            </div>
+            <img class="pol-img" src="polaroid-2.jpg" alt=""
+                 onerror="this.style.display='none'"
+                 onload="this.closest('.polaroid').classList.add('has-photo')">
+          </div>
+        </div>
+ 
+        <img class="strip strip-1" src="photo-strip-1.jpg" alt="Photo strip 1">
+        <img class="strip strip-2" src="photo-strip-2.jpg" alt="Photo strip 2">
+ 
+        <div class="polaroid pol-r1">
+          <div class="photo-area">
+            <div class="placeholder-scene">
+              <div class="cloud" style="width:16px;height:9px;left:55%;top:14%;"></div>
+              <div class="hill2"></div>
+              <div class="hill"></div>
+            </div>
+            <img class="pol-img" src="polaroid-3.jpg" alt=""
+                 onerror="this.style.display='none'"
+                 onload="this.closest('.polaroid').classList.add('has-photo')">
+          </div>
+        </div>
+ 
+        <div class="polaroid pol-r2">
+          <div class="photo-area">
+            <div class="placeholder-scene">
+              <div class="cloud" style="width:16px;height:9px;left:20%;top:16%;"></div>
+              <div class="hill2"></div>
+              <div class="hill"></div>
+            </div>
+            <img class="pol-img" src="polaroid-4.jpg" alt=""
+                 onerror="this.style.display='none'"
+                 onload="this.closest('.polaroid').classList.add('has-photo')">
+          </div>
+        </div>
+ 
+        <div class="arrow-note">
+          <svg viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 6 C 20 4, 55 8, 74 34" stroke="#ec5f8a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M62 30 L76 36 L68 22" stroke="#ec5f8a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="note-text">fa eyyowt</span>
+        </div>
+      </div>
+ 
+      <div class="collage-title">
+        <span class="script">Captured memories 💕</span>
+      </div>
+ 
+      <div class="action-row">
+        <a href="page3.html" class="back-btn">Back to gifts</a>
+      </div>
+    </main>
+  </div>
+ 
+<script src="shared.js"></script>
+ 
+</body>
+</html>

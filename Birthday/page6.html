@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Birthday Cake 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{ cursor: pointer; user-select:none; -webkit-user-select:none; }
+ 
+  .stage{ max-width: 420px; }
+  .card{ max-width: 420px; padding: 34px 28px 30px; }
+ 
+  .cake-title{
+    font-family:'Fredoka', sans-serif;
+    font-size: 1.3rem;
+    color: var(--text-deep);
+    margin-bottom: 4px;
+  }
+ 
+  .cake-progress{
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    margin-bottom: 18px;
+    font-weight:600;
+    letter-spacing:0.3px;
+  }
+ 
+  .cake-stage{
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto 18px;
+    position:relative;
+  }
+ 
+  .cake-stage svg{ width:100%; height:auto; overflow:visible; }
+ 
+  .cake-piece{
+    opacity:0;
+    transform: scale(0.4) translateY(14px);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: opacity 0.45s cubic-bezier(.2,.9,.3,1.3), transform 0.45s cubic-bezier(.2,.9,.3,1.3);
+  }
+ 
+  .cake-piece.shown{
+    opacity:1;
+    transform: scale(1) translateY(0);
+  }
+ 
+  .flame{
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: flicker 0.9s ease-in-out infinite;
+  }
+ 
+  @keyframes flicker{
+    0%, 100% { transform: scale(1) rotate(-2deg); }
+    50% { transform: scale(1.12) rotate(2deg); }
+  }
+ 
+  .sparkle-burst{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+ 
+  .tap-hint{
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    animation: hintPulse 1.6s ease-in-out infinite;
+    min-height: 1.4em;
+  }
+ 
+  @keyframes hintPulse{
+    0%, 100% { opacity:0.6; }
+    50% { opacity:1; }
+  }
+ 
+  .greeting-wrap{
+    display:none;
+  }
+ 
+  .greeting-wrap.show{
+    display:block;
+    animation: greetPop 0.6s cubic-bezier(.2,.8,.3,1.3) both;
+  }
+ 
+  @keyframes greetPop{
+    from{ opacity:0; transform: scale(0.7); }
+    to{ opacity:1; transform: scale(1); }
+  }
+ 
+  .greeting-text{
+    font-family:'Caveat', cursive;
+    font-size: 2.3rem;
+    color: var(--accent-1);
+    line-height:1.15;
+    margin-bottom: 6px;
+  }
+ 
+  .greeting-sub{
+    font-size: 0.9rem;
+    color: var(--text-soft);
+  }
+ 
+  .action-row{
+    display:none;
+    justify-content:center;
+    margin-top: 18px;
+  }
+ 
+  .action-row.show{ display:flex; }
+ 
+  .back-btn{
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size: 0.8rem;
+    cursor:pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1.5px solid rgba(163,72,106,0.35);
+    background: rgba(255,255,255,0.4);
+    color: var(--text-deep);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+  }
+ 
+  .back-btn:hover{ transform: translateY(-2px); }
+ 
+  .confetti-layer{
+    position:fixed;
+    inset:0;
+    z-index:5;
+    pointer-events:none;
+    overflow:hidden;
+  }
+ 
+  .confetti-piece{
+    position:absolute;
+    top:-40px;
+    font-size: 1.2rem;
+    animation: confettiFall linear forwards;
+  }
+ 
+  @keyframes confettiFall{
+    to{ transform: translateY(110vh) rotate(360deg); opacity:0.2; }
+  }
+ 
+  @media (prefers-reduced-motion: reduce){
+    .flame{ animation:none; }
+    .tap-hint{ animation:none; }
+  }
+</style>
+</head>
+<body>
+ 
+  <div class="marble-wrap" aria-hidden="true">
+    <div class="marble-bg"></div>
+    <div class="marble-sheen"></div>
+  </div>
+ 
+  <div class="butterfly-field" aria-hidden="true"></div>
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+  <div class="butterflies" id="butterflies" aria-hidden="true"></div>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+ 
+  <div class="stage">
+    <main class="card" id="page6" role="main">
+      <h1 class="cake-title">Let's Build Your Cake</h1>
+      <p class="cake-progress" id="progressText">0 / 6 pieces</p>
+ 
+      <div class="cake-stage">
+        <svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- plate: always visible -->
+          <ellipse cx="130" cy="200" rx="95" ry="12" fill="#f3c7d6"/>
+          <ellipse cx="130" cy="197" rx="95" ry="12" fill="#fff0f5"/>
+ 
+          <!-- piece 1: bottom tier -->
+          <g class="cake-piece" id="piece1">
+            <rect x="55" y="140" width="150" height="58" rx="10" fill="#f7a8c4"/>
+          </g>
+ 
+          <!-- piece 2: bottom frosting -->
+          <g class="cake-piece" id="piece2">
+            <path d="M50 142 Q65 128 80 142 T110 142 T140 142 T170 142 T200 142 Q210 142 210 150 L210 150 L50 150 Z" fill="#fff3f8"/>
+            <path d="M50 142 Q65 128 80 142 T110 142 T140 142 T170 142 T200 142" fill="none" stroke="#ffffff" stroke-width="1"/>
+          </g>
+ 
+          <!-- piece 3: top tier -->
+          <g class="cake-piece" id="piece3">
+            <rect x="80" y="92" width="100" height="52" rx="9" fill="#f78fb0"/>
+          </g>
+ 
+          <!-- piece 4: top frosting + candle sticks -->
+          <g class="cake-piece" id="piece4">
+            <path d="M76 94 Q88 80 100 94 T124 94 T148 94 T172 94 Q182 94 182 102 L182 102 L76 102 Z" fill="#fff3f8"/>
+            <rect x="95" y="66" width="5" height="30" rx="2" fill="#f4c95d"/>
+            <rect x="127" y="60" width="5" height="36" rx="2" fill="#f78fb0"/>
+            <rect x="159" y="66" width="5" height="30" rx="2" fill="#f4c95d"/>
+          </g>
+ 
+          <!-- piece 5: flames -->
+          <g class="cake-piece" id="piece5">
+            <path class="flame" d="M97.5 66 c-4 -8 4 -12 0 -20 c8 6 8 16 3 20 c-1 1 -2 0.5 -3 0" fill="#ffb238"/>
+            <path class="flame" d="M129.5 60 c-4 -8 4 -12 0 -20 c8 6 8 16 3 20 c-1 1 -2 0.5 -3 0" fill="#ff9f3c"/>
+            <path class="flame" d="M161.5 66 c-4 -8 4 -12 0 -20 c8 6 8 16 3 20 c-1 1 -2 0.5 -3 0" fill="#ffb238"/>
+          </g>
+ 
+          <!-- piece 6: sprinkles + cherries -->
+          <g class="cake-piece" id="piece6">
+            <circle cx="65" cy="148" r="3" fill="#ec5f8a"/>
+            <circle cx="90" cy="152" r="2.4" fill="#8fd3f4"/>
+            <circle cx="120" cy="148" r="3" fill="#f4c95d"/>
+            <circle cx="150" cy="152" r="2.4" fill="#ec5f8a"/>
+            <circle cx="180" cy="148" r="3" fill="#8fd3f4"/>
+            <circle cx="105" cy="98" r="5" fill="#c9294f"/>
+            <circle cx="153" cy="98" r="5" fill="#c9294f"/>
+            <circle cx="103" cy="95" r="1.6" fill="#fff" opacity="0.7"/>
+            <circle cx="151" cy="95" r="1.6" fill="#fff" opacity="0.7"/>
+          </g>
+        </svg>
+        <div class="sparkle-burst" id="sparkleBurst"></div>
+      </div>
+ 
+      <p class="tap-hint" id="tapHint">👆 Tap anywhere to add a piece!</p>
+ 
+      <div class="greeting-wrap" id="greetingWrap">
+        <p class="greeting-text">Happy birthday loveyyy 💕</p>
+        <p class="greeting-sub">Every piece of this cake was made with love, just like every day with you. 🎂✨</p>
+      </div>
+ 
+      <div class="action-row" id="actionRow">
+        <a href="page3.html" class="back-btn">Back to gifts</a>
+      </div>
+    </main>
+  </div>
+ 
+<script src="shared.js"></script>
+<script>
+  const TOTAL_PIECES = 6;
+  let piecesShown = 0;
+  let completed = false;
+ 
+  const progressText = document.getElementById('progressText');
+  const tapHint = document.getElementById('tapHint');
+  const greetingWrap = document.getElementById('greetingWrap');
+  const sparkleBurst = document.getElementById('sparkleBurst');
+  const confettiLayer = document.getElementById('confettiLayer');
+  const actionRow = document.getElementById('actionRow');
+ 
+  function addSparkle(){
+    const s = document.createElement('span');
+    s.textContent = '✨';
+    s.style.position = 'absolute';
+    s.style.left = (30 + Math.random() * 40) + '%';
+    s.style.top = (20 + Math.random() * 40) + '%';
+    s.style.fontSize = (14 + Math.random() * 10) + 'px';
+    s.style.opacity = '1';
+    s.style.transition = 'transform 0.8s ease, opacity 0.8s ease';
+    sparkleBurst.appendChild(s);
+    requestAnimationFrame(() => {
+      s.style.transform = 'translateY(-24px) scale(1.3)';
+      s.style.opacity = '0';
+    });
+    setTimeout(() => s.remove(), 850);
+  }
+ 
+  function launchConfetti(){
+    const emojis = ['🎉','💖','🎊','✨','🩷','🎈'];
+    for(let i = 0; i < 30; i++){
+      const c = document.createElement('span');
+      c.className = 'confetti-piece';
+      c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      c.style.left = Math.random() * 100 + '%';
+      c.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+      c.style.animationDelay = (Math.random() * 1.2) + 's';
+      confettiLayer.appendChild(c);
+      setTimeout(() => c.remove(), 5000);
+    }
+  }
+ 
+  function addPiece(){
+    if(completed) return;
+    if(piecesShown >= TOTAL_PIECES) return;
+ 
+    piecesShown++;
+    const piece = document.getElementById('piece' + piecesShown);
+    if(piece) piece.classList.add('shown');
+    addSparkle();
+    progressText.textContent = piecesShown + ' / ' + TOTAL_PIECES + ' pieces';
+ 
+    if(piecesShown >= TOTAL_PIECES){
+      completed = true;
+      tapHint.style.display = 'none';
+      setTimeout(() => {
+        greetingWrap.classList.add('show');
+        launchConfetti();
+        actionRow.classList.add('show');
+      }, 500);
+    }
+  }
+ 
+  document.body.addEventListener('click', function(e){
+    if(e.target.closest('.action-row')) return;
+    addPiece();
+  });
+  document.body.addEventListener('touchstart', function(e){
+    if(e.target.closest('.action-row')) return;
+    e.preventDefault();
+    addPiece();
+  }, { passive: false });
+</script>
+ 
+</body>
+</html>

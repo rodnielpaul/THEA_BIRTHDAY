@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Special Surprise 🎁</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .lock-badge{
+    width:64px;
+    height:64px;
+    margin: 0 auto 18px;
+    border-radius:50%;
+    background: linear-gradient(145deg, #ffe9b8, var(--gold));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 8px 18px rgba(244,201,93,0.45), inset 0 1px 2px rgba(255,255,255,0.7);
+    animation: pulse 2.6s ease-in-out infinite;
+    transition: background 0.4s ease;
+  }
+
+  .lock-badge.unlocked{
+    background: linear-gradient(145deg, #d9ffe0, #8ee6a0);
+    box-shadow: 0 8px 18px rgba(142,230,160,0.5), inset 0 1px 2px rgba(255,255,255,0.7);
+  }
+
+  @keyframes pulse{
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .lock-badge svg{ width:28px; height:28px; }
+
+  h1 .ribbon{ font-size:1.25rem; }
+
+  .field{
+    text-align:left;
+    margin-bottom: 22px;
+  }
+
+  .field label{
+    display:block;
+    font-size: 0.8rem;
+    font-weight:600;
+    color: var(--text-deep);
+    margin-bottom: 8px;
+    letter-spacing:0.2px;
+  }
+
+  .date-input-wrap{ position:relative; }
+
+  input[type="date"]{
+    width:100%;
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(236,95,138,0.25);
+    background: rgba(255,255,255,0.55);
+    font-family:'Quicksand', sans-serif;
+    font-size: 1rem;
+    font-weight:600;
+    color: var(--text-deep);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    -webkit-appearance:none;
+    color-scheme: light;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator{
+    filter: invert(38%) sepia(45%) saturate(1500%) hue-rotate(300deg) brightness(95%);
+    cursor:pointer;
+    opacity:0.75;
+  }
+
+  input[type="date"]:focus{
+    border-color: var(--accent-1);
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 0 4px rgba(236,95,138,0.15);
+  }
+
+  input[type="date"].shake{
+    animation: shake 0.45s ease;
+    border-color: #d63a6a;
+  }
+
+  @keyframes shake{
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .error-msg{
+    display:none;
+    font-size:0.78rem;
+    color:#c0396a;
+    margin-top:8px;
+    font-weight:600;
+  }
+
+  .error-msg.show{ display:block; }
+
+  .unlock-btn{
+    width:100%;
+    padding: 15px 20px;
+    border:none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color:#fff;
+    font-family:'Fredoka', sans-serif;
+    font-size: 1.02rem;
+    font-weight:600;
+    letter-spacing:0.3px;
+    cursor:pointer;
+    box-shadow: 0 12px 24px rgba(236,95,138,0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.3s ease;
+  }
+
+  .unlock-btn:hover{ transform: translateY(-2px); box-shadow: 0 16px 28px rgba(236,95,138,0.48); }
+  .unlock-btn:active{ transform: translateY(0px) scale(0.98); }
+  .unlock-btn:disabled{ opacity:0.85; cursor:default; transform:none; }
+
+  .unlock-btn.success{
+    background: linear-gradient(135deg, #4fce6f, #8ee6a0);
+    box-shadow: 0 12px 24px rgba(79,206,111,0.4);
+  }
+
+  .decor-row{
+    margin-top: 22px;
+    font-size: 1.1rem;
+    letter-spacing: 10px;
+    color: var(--accent-1);
+    opacity:0.85;
+  }
+</style>
+</head>
+<body>
+
+  <div class="marble-wrap" aria-hidden="true">
+    <div class="marble-bg"></div>
+    <div class="marble-sheen"></div>
+  </div>
+
+  <div class="butterfly-field" aria-hidden="true"></div>
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+  <div class="butterflies" id="butterflies" aria-hidden="true"></div>
+
+  <div class="stage">
+    <main class="card" id="page1" role="main">
+      <div class="lock-badge" id="lockBadge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 10V8a6 6 0 0112 0v2" stroke="#8a5a12" stroke-width="1.8" stroke-linecap="round"/>
+          <rect x="4.5" y="10" width="15" height="10.5" rx="3" fill="#fff8e6" stroke="#8a5a12" stroke-width="1.5"/>
+          <circle cx="12" cy="14.5" r="1.6" fill="#8a5a12"/>
+          <path d="M12 16.1V17.6" stroke="#8a5a12" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1><span class="ribbon">🎀</span> Special Surprise <span class="ribbon">🎀</span></h1>
+      <p class="subtitle">Enter your birthdate to unlock your gift!</p>
+
+      <form id="unlockForm" novalidate>
+        <div class="field">
+          <label for="birthdate">Your Birthdate</label>
+          <div class="date-input-wrap">
+            <input type="date" id="birthdate" name="birthdate" required>
+          </div>
+          <p class="error-msg" id="errorMsg">Please enter your birthdate to continue.</p>
+        </div>
+
+        <button type="submit" class="unlock-btn" id="unlockBtn">Unlock My Gift</button>
+      </form>
+
+      <div class="decor-row" aria-hidden="true">✨ 🩷 ✨</div>
+      <p class="made-with">Made with 🩷 for you</p>
+    </main>
+  </div>
+
+<script src="shared.js"></script>
+<script>
+  // ---- The one correct answer that unlocks the gift ----
+  const CORRECT_BIRTHDATE = "2006-08-31"; // YYYY-MM-DD, matches <input type="date"> value format
+
+  const form = document.getElementById('unlockForm');
+  const input = document.getElementById('birthdate');
+  const errorMsg = document.getElementById('errorMsg');
+  const btn = document.getElementById('unlockBtn');
+  const lockBadge = document.getElementById('lockBadge');
+  const page1 = document.getElementById('page1');
+
+  function showError(message){
+    errorMsg.textContent = message;
+    errorMsg.classList.add('show');
+    input.classList.remove('shake');
+    void input.offsetWidth; // restart animation
+    input.classList.add('shake');
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    if(!input.value){
+      showError("Please enter your birthdate to continue.");
+      input.focus();
+      return;
+    }
+
+    const chosen = new Date(input.value + 'T00:00:00');
+    const today = new Date();
+    if(chosen > today){
+      showError("That date hasn't happened yet — try again!");
+      return;
+    }
+
+    if(input.value !== CORRECT_BIRTHDATE){
+      showError("Hmm, that's not quite right. This gift only unlocks for one special birthday 💕");
+      return;
+    }
+
+    // Correct birthdate — unlock!
+    errorMsg.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = "Unlocking... 🔓";
+    lockBadge.classList.add('unlocked');
+
+    setTimeout(() => {
+      btn.classList.add('success');
+      btn.textContent = "Unlocked! 🎉";
+    }, 800);
+
+    // Move on to the greeting page
+    setTimeout(() => {
+      page1.classList.add('leaving');
+      setTimeout(() => {
+        window.location.href = 'page2.html';
+      }, 480);
+    }, 1500);
+  });
+</script>
+
+</body>
+</html>
